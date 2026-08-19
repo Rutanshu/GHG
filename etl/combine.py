@@ -22,6 +22,7 @@ SOURCES = [
     ("nz-mfe-2026", "out/nz-mfe-2026.json", "NZ Ministry for the Environment — Measuring Emissions 2026"),
     ("cea-india-2025", "out/cea-india-2025.json", "India CEA CO2 Baseline Database v21.0"),
     ("eccc-canada-2026", "out/eccc-canada-2026.json", "Canada ECCC Federal GHG Offset System Emission Factors"),
+    ("eurostat-2024", "out/eurostat-2024.json", "Eurostat GHG Intensity by NACE Sector (EU + EEA countries)"),
 ]
 
 DEST_DIR = "../data/factors"

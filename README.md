@@ -1,20 +1,21 @@
 # Open GHG Emission Factor Register
 
-An open, citation-first catalogue of **20,371 real greenhouse-gas emission factors** from **6 government datasets across 5 countries**, extracted programmatically from official sources, for corporate carbon accounting under the GHG Protocol — filed by scope, GHG Protocol category, country/region, year, and publishing organization, with spend-based and physical (weight/activity) methods labelled separately.
+An open, citation-first catalogue of **28,481 real greenhouse-gas emission factors** from **7 government datasets covering 34 countries**, extracted programmatically from official sources, for corporate carbon accounting under the GHG Protocol — filed by scope, GHG Protocol category, country/region, year, and publishing organization, with spend-based and physical (weight/activity) methods labelled separately.
 
 ## What's loaded right now
 
-| Source | Country | Records | Coverage |
+| Source | Countries | Records | Coverage |
 |---|---|---:|---|
 | UK DESNZ/Defra — GHG Conversion Factors 2025 | GB | 6,973 | Fuels, refrigerants, vehicles, electricity, heat & steam, well-to-tank, water, waste, materials, business travel, hotels, homeworking |
 | US EPA — GHG Emission Factors Hub (Jan 2025) | US | 1,029 | Stationary & mobile combustion, purchased electricity, steam/heat, transport & distribution, waste, business travel/commuting |
 | US EPA — eGRID2023 (rev2) | US | 7,632 | Electricity GHG rates at subregion, state, NERC region, balancing-authority, and national level |
 | NZ Ministry for the Environment — Measuring Emissions 2026 | NZ | 3,252 | Fuel, refrigerants, agriculture/forestry, purchased electricity/heat/steam, travel, freight, materials & waste, water, working-from-home |
 | India CEA — CO2 Baseline Database v21.0 | IN | 958 | National grid headline factors (weighted average, OM/BM/CM) plus ~950 individual thermal generating units' specific CO2 rate |
-| Canada ECCC — Federal GHG Offset System factors | CA | 527 | Natural gas (CO2/CH4/N2O) by province, NGL & refined petroleum products, provincial electricity intensity, biogas N2O |
-| **Total** | **5 countries** | **20,371** | |
+| Canada ECCC — Federal GHG Offset System factors | CA | 558 | Natural gas (CO2/CH4/N2O) by province, NGL & refined petroleum products, provincial electricity intensity, biogas N2O, enteric fermentation & manure management Tier-2 factors |
+| Eurostat/EEA — GHG intensity by NACE sector | 27 EU + NO/IS/CH/RS/TR | 8,079 | Spend-based GHG intensity (gCO2e/EUR of output or value-added) across 79 economic sectors, 2023–2024 — the register's first real spend-based dataset |
+| **Total** | **34 countries** | **28,481** | |
 
-Every one of these values was read by a Python parser (`etl/`) directly out of the publisher's own spreadsheet or published HTML table — never typed by hand. `data/sources.json` also lists agencies known but not yet integrated (IPCC EFDB, IEA, ADEME, Australia DCCEEW — unreachable from this build environment, EU, Japan, …) with `"populated": false`, as the map for extending this further.
+Every one of these values was read by a Python parser (`etl/`) directly out of the publisher's own spreadsheet, API, or published HTML table — never typed by hand. The Canada and Eurostat parsers in particular pull from a live government page and a REST API rather than a downloadable file, since neither publisher offers one. `data/sources.json` also lists agencies known but not yet integrated (IPCC EFDB, ADEME, Australia DCCEEW — unreachable from this build environment, Japan, Brazil, China, …) with `"populated": false`, plus a separate list of **paid/commercial providers** (IEA, ecoinvent, Climatiq, Sphera, S&P Global Trucost, Carbon Minds) for factors outside what free government data covers — also shown on the site itself, in the "Need a factor that isn't here?" section.
 
 ## Why it exists
 

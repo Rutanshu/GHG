@@ -171,6 +171,60 @@ def electricity_table(table, years, table_label):
                 province, year, f"{table_label} — {province}")
 
 
+def enteric_ym_table(table, table_label):
+    header, rows = table_rows(table)
+    for row in rows:
+        diet, val = row[0], num(row[1])
+        if val is None:
+            continue
+        add(f"enteric-ym-{diet[:60]}", f"Enteric fermentation — CH4 conversion factor (Ym) — {diet}",
+            1, "1", "Scope 1 direct", val, "fraction", "gross energy intake (GE)", "CH4",
+            "Canada (national)", 2025, f"{table_label} — {diet}",
+            notes="Ym: fraction of gross energy intake converted to enteric CH4 (IPCC Tier 2 parameter).")
+
+
+def lipid_ef_table(table, table_label):
+    header, rows = table_rows(table)
+    for row in rows:
+        lipid, val = row[0], num(row[1])
+        if val is None:
+            continue
+        add(f"lipid-ef-{lipid}", f"Enteric fermentation — supplemented lipid CH4 reduction factor — {lipid}% added",
+            1, "1", "Scope 1 direct", val, "multiplier", "baseline Ym", "CH4",
+            "Canada (national)", 2025, f"{table_label} — {lipid}% supplemented lipid",
+            notes="Multiplier applied to the baseline Ym conversion factor for diets with added lipid.")
+
+
+def manure_table(table, table_label):
+    header, rows = table_rows(table)
+    for row in rows:
+        system = row[0]
+        cols = [("MCF", 1, "fraction", "max CH4 producing capacity (VS basis)", "CH4"),
+                ("EFMS direct N2O", 2, "kgN2O-N", "kg N excreted", "N2O"),
+                ("Frac_volatilize", 3, "fraction", "N excreted", "N2O"),
+                ("Frac_leach", 4, "fraction", "N excreted", "N2O")]
+        for label, ci, unit_num, unit_denom, gas in cols:
+            if ci >= len(row):
+                continue
+            val = num(row[ci])
+            if val is None:
+                continue
+            add(f"manure-{system}-{label}", f"Manure management — {system} — {label}",
+                1, "1", "Scope 1 direct", val, unit_num, unit_denom, gas,
+                "Canada (national)", 2025, f"{table_label} — {system}, {label}")
+
+
+def ecozone_efv_table(table, table_label):
+    header, rows = table_rows(table)
+    for row in rows:
+        zone, val = row[0], num(row[1])
+        if val is None:
+            continue
+        add(f"efv-{zone}", f"Manure management — indirect N2O from volatilization — {zone}",
+            1, "1", "Scope 1 direct", val, "kgN2O-N", "kg N volatilized", "N2O",
+            zone, 2025, f"{table_label} — {zone}")
+
+
 def biogas_table(table, years, table_label):
     header, rows = table_rows(table)
     for row in rows:
@@ -214,6 +268,11 @@ def main():
     biogas_table(tables[16], [2023, 2024], "Table 6.1 (biogas N2O)")
     biogas_table(tables[17], [2025], "Table 6.2 (biogas N2O)")
     biogas_table(tables[18], [2026], "Table 6.3 (biogas N2O)")
+
+    enteric_ym_table(tables[21], "Table 9 (enteric CH4 conversion factors by diet)")
+    lipid_ef_table(tables[22], "Table 10 (supplemented lipid CH4 reduction factor)")
+    manure_table(tables[23], "Table 11 (manure management CH4/N2O factors by storage system)")
+    ecozone_efv_table(tables[24], "Table 12 (indirect N2O from manure volatilization by ecozone)")
 
     print(f"ECCC Canada: {len(records)} records")
     ids = [r["id"] for r in records]

@@ -1,5 +1,5 @@
 {
-  "total_records": 20371,
+  "total_records": 28481,
   "files": [
     {
       "file": "data/factors/defra-2025.json",
@@ -34,8 +34,14 @@
     {
       "file": "data/factors/eccc-canada-2026.json",
       "label": "Canada ECCC Federal GHG Offset System Emission Factors",
-      "count": 527,
-      "size_kb": 586.1
+      "count": 558,
+      "size_kb": 623.0
+    },
+    {
+      "file": "data/factors/eurostat-2024.json",
+      "label": "Eurostat GHG Intensity by NACE Sector (EU + EEA countries)",
+      "count": 8079,
+      "size_kb": 11210.0
     }
   ]
 }

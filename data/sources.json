@@ -44,6 +44,21 @@
     "url": "https://www.epa.gov/climateleadership/supply-chain-greenhouse-gas-emission-factors"
   },
   {
+    "organization": "Eurostat (European Commission) / European Environment Agency (EEA)",
+    "dataset": "Air emissions intensities by NACE Rev. 2 activity (env_ac_aeint_r2)",
+    "region": "EU27 + Norway, Iceland, Switzerland, Serbia, Turkey (33 countries incl. EU aggregate)",
+    "coverage": "Spend-based GHG intensity (gCO2e per EUR of sector output or value-added) across 79 NACE Rev.2 economic sectors, 2023-2024 — 8,079 factors loaded, first real spend-based data in the register",
+    "methods": [
+      "spend-based"
+    ],
+    "cadence": "Annual",
+    "licence": "CC BY 4.0 (Eurostat standard reuse policy)",
+    "free": true,
+    "populated": true,
+    "records_loaded": 8079,
+    "url": "https://ec.europa.eu/eurostat/databrowser/view/env_ac_aeint_r2/default/table"
+  },
+  {
     "organization": "US EPA",
     "dataset": "eGRID2023 (Revision 2)",
     "region": "US — subregion, state, NERC region, balancing authority & national",
@@ -84,7 +99,8 @@
     "licence": "Proprietary — licence required",
     "free": false,
     "url": "https://www.iea.org/data-and-statistics/data-product/emissions-factors",
-    "populated": false
+    "populated": false,
+    "pricing_note": "Licensed subscription; institutional pricing on request via iea.org."
   },
   {
     "organization": "ADEME",
@@ -129,13 +145,14 @@
     "licence": "Proprietary — licence required",
     "free": false,
     "url": "https://ecoinvent.org/",
-    "populated": false
+    "populated": false,
+    "pricing_note": "Annual licence, tiered by organization size/type; apply via ecoinvent.org."
   },
   {
     "organization": "Environment and Climate Change Canada",
     "dataset": "Federal GHG Offset System — Emission Factors and Reference Values (2023–2026)",
     "region": "CA (provincial grids)",
-    "coverage": "Natural gas (CO2/CH4/N2O) by province, NGL & refined petroleum product factors, provincial electricity consumption intensity, biogas N2O — 527 factors loaded",
+    "coverage": "Natural gas (CO2/CH4/N2O) by province, NGL & refined petroleum product factors, provincial electricity consumption intensity, biogas N2O, plus enteric fermentation/manure management Tier-2 factors — 558 factors loaded",
     "methods": [
       "activity-based"
     ],
@@ -144,7 +161,7 @@
     "free": true,
     "url": "https://www.canada.ca/en/environment-climate-change/services/climate-change/pricing-pollution-how-it-will-work/output-based-pricing-system/federal-greenhouse-gas-offset-system/emission-factors-reference-values.html",
     "populated": true,
-    "records_loaded": 527
+    "records_loaded": 558
   },
   {
     "organization": "Australia DCCEEW",
@@ -203,7 +220,8 @@
     "licence": "Freemium — check per-source licence",
     "free": false,
     "url": "https://www.climatiq.io/",
-    "populated": false
+    "populated": false,
+    "pricing_note": "Freemium API — free tier with usage limits, paid tiers by API call volume."
   },
   {
     "organization": "New Zealand Ministry for the Environment",
@@ -219,5 +237,52 @@
     "populated": true,
     "records_loaded": 3252,
     "url": "https://measuringemissionsguide.environment.govt.nz/"
+  },
+  {
+    "organization": "Sphera",
+    "dataset": "GaBi LCA Databases",
+    "region": "GLOBAL",
+    "coverage": "Industry-leading process-level LCA database, extensive material/energy/transport datasets",
+    "methods": [
+      "weight-based",
+      "activity-based"
+    ],
+    "cadence": "Periodic releases",
+    "licence": "Proprietary — licence required",
+    "free": false,
+    "populated": false,
+    "pricing_note": "Enterprise licence, quote-based; bundled with Sphera LCA for Experts software.",
+    "url": "https://sphera.com/environmental-lca-database/"
+  },
+  {
+    "organization": "S&P Global",
+    "dataset": "Trucost Environmental Register",
+    "region": "GLOBAL",
+    "coverage": "Company- and sector-level environmental impact data, incl. GHG intensity, for financial/investment use",
+    "methods": [
+      "spend-based",
+      "activity-based"
+    ],
+    "cadence": "Annual",
+    "licence": "Proprietary — licence required",
+    "free": false,
+    "populated": false,
+    "pricing_note": "Institutional/enterprise licence, quote-based via S&P Global Sustainable1.",
+    "url": "https://www.spglobal.com/esg/solutions/data-intelligence-esg-scores"
+  },
+  {
+    "organization": "Carbon Minds",
+    "dataset": "CMDB (chemicals & plastics LCA database)",
+    "region": "GLOBAL",
+    "coverage": "Cradle-to-gate GHG and LCA factors for chemical and plastic products",
+    "methods": [
+      "weight-based"
+    ],
+    "cadence": "Periodic releases",
+    "licence": "Proprietary — licence required",
+    "free": false,
+    "populated": false,
+    "pricing_note": "Subscription, tiered by dataset scope; quote via carbon-minds.com.",
+    "url": "https://www.carbon-minds.com/"
   }
 ]
