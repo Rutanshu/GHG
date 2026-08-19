@@ -9,115 +9,157 @@
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{
-  --ink:#10161a; --paper:#e6e9e3; --panel:#f3f5f0; --rule:#c3cabf;
+  --ink:#10161a; --paper:#eef3ee; --panel:#f3f5f0; --rule:#c3cabf;
   --green:#2e5e45; --amber:#a8621b; --slate:#5c6862; --white:#fbfcfa;
   --mono:'IBM Plex Mono',ui-monospace,monospace;
   --sans:'IBM Plex Sans',system-ui,sans-serif;
   --disp:'Space Grotesk',var(--sans);
+
+  /* glass */
+  --glass:rgba(255,255,255,.52);
+  --glass-strong:rgba(255,255,255,.86);
+  --glass-border:rgba(255,255,255,.55);
+  --glass-shadow:0 8px 32px rgba(16,40,30,.14), 0 1px 0 rgba(255,255,255,.6) inset;
+  --blur:18px;
+  --r-lg:20px; --r-md:14px; --r-sm:9px;
 }
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
-body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.55}
+body{margin:0;color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.55;background:var(--paper)}
 a{color:var(--green)}
 :focus-visible{outline:2px solid var(--amber);outline-offset:2px}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 
+/* ---- atmospheric background canvas (glassmorphism backdrop) ---- */
+.bg-canvas{position:fixed;inset:0;z-index:-1;overflow:hidden;
+  background:
+    radial-gradient(ellipse 900px 650px at 8% -8%, rgba(52,158,110,.38), transparent 60%),
+    radial-gradient(ellipse 750px 750px at 108% 8%, rgba(214,154,58,.30), transparent 60%),
+    radial-gradient(ellipse 950px 750px at 92% 96%, rgba(28,124,148,.32), transparent 62%),
+    radial-gradient(ellipse 750px 650px at -8% 92%, rgba(58,120,180,.24), transparent 60%),
+    linear-gradient(160deg,#f3f8f3 0%,#eaf4ee 45%,#e6f1f4 100%);
+}
+/* Drop a generated image at assets/hero-esg.jpg and it appears here automatically,
+   blended softly under the glass panels. Nothing breaks if the file doesn't exist yet. */
+.bg-canvas::after{content:"";position:absolute;inset:0;
+  background-image:url('assets/hero-esg.jpg');
+  background-size:cover;background-position:center 30%;
+  opacity:.16;mix-blend-mode:multiply;filter:saturate(1.15);
+}
+
+/* ---- glass utility ---- */
+.glass{background:var(--glass);backdrop-filter:blur(var(--blur)) saturate(160%);-webkit-backdrop-filter:blur(var(--blur)) saturate(160%);
+  border:1px solid var(--glass-border);border-radius:var(--r-lg);box-shadow:var(--glass-shadow)}
+.glass-strong{background:var(--glass-strong);backdrop-filter:blur(14px) saturate(140%);-webkit-backdrop-filter:blur(14px) saturate(140%);
+  border:1px solid var(--glass-border);border-radius:var(--r-lg);box-shadow:var(--glass-shadow)}
+
 .wrap{max-width:1240px;margin:0 auto;padding:0 20px}
 
 /* ---- masthead ---- */
-header.mast{border-bottom:1px solid var(--rule);padding:38px 0 26px}
+header.mast{padding:26px 0 20px}
+header.mast .wrap>.glass{padding:34px clamp(20px,4vw,46px) 30px}
 .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--slate)}
 h1{font-family:var(--disp);font-weight:700;font-size:clamp(32px,5.2vw,58px);line-height:1.02;margin:.35em 0 .3em;letter-spacing:-.02em;max-width:16ch}
 .lede{max-width:62ch;color:#2b3339}
 .stats{display:flex;flex-wrap:wrap;gap:28px;margin-top:22px;font-family:var(--mono);font-size:12px;color:var(--slate)}
 .stats b{display:block;font-size:23px;color:var(--ink);font-weight:600}
 
-.warn{margin:22px 0 0;border-left:3px solid var(--amber);background:#f7efe4;padding:12px 16px;font-size:13.5px;max-width:78ch}
+.warn{margin:22px 0 0;border-left:3px solid var(--amber);background:rgba(247,239,228,.65);backdrop-filter:blur(6px);padding:12px 16px;font-size:13.5px;max-width:78ch;border-radius:0 var(--r-sm) var(--r-sm) 0}
 
 /* ---- layout ---- */
-.cols{display:grid;grid-template-columns:200px 1fr;gap:34px;padding:30px 0 70px;align-items:start}
+.cols{display:grid;grid-template-columns:220px 1fr;gap:24px;padding:24px 0 70px;align-items:start}
 @media(max-width:880px){.cols{grid-template-columns:1fr;gap:20px}}
 
 /* ---- spine (signature) ---- */
-.spine{position:sticky;top:16px}
+.spine{position:sticky;top:16px;padding:16px}
 .spine h2{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--slate);margin:0 0 10px;font-weight:500}
 .cat{display:grid;grid-template-columns:38px 1fr auto;align-items:baseline;gap:8px;width:100%;text-align:left;
-  background:none;border:0;border-top:1px solid var(--rule);padding:7px 2px;cursor:pointer;font-family:var(--sans);font-size:12.5px;color:var(--slate)}
-.cat:last-child{border-bottom:1px solid var(--rule)}
+  background:rgba(255,255,255,.001);border:0;border-radius:var(--r-sm);padding:8px 8px;cursor:pointer;font-family:var(--sans);font-size:12.5px;color:var(--slate);transition:background .15s ease,color .15s ease,transform .12s ease}
+.cat:hover{color:var(--ink);background:rgba(255,255,255,.55);transform:translateX(2px)}
 .cat .n{font-family:var(--mono);font-size:12px;font-weight:600;color:var(--ink)}
 .cat .c{font-family:var(--mono);font-size:11px}
-.cat:hover{color:var(--ink)}
-.cat[aria-pressed="true"]{color:var(--white);background:var(--green)}
+.cat[aria-pressed="true"]{color:var(--white);background:linear-gradient(135deg,var(--green),#1f4633);box-shadow:0 4px 14px rgba(46,94,69,.35)}
 .cat[aria-pressed="true"] .n{color:var(--white)}
 .cat[aria-pressed="true"] .c{color:#cfe0d6}
 @media(max-width:880px){
   .spine{position:static}
   .catlist{display:flex;overflow-x:auto;gap:6px;padding-bottom:6px}
-  .cat{width:auto;grid-template-columns:auto;border:1px solid var(--rule);border-radius:2px;padding:6px 10px;white-space:nowrap}
+  .cat{width:auto;grid-template-columns:auto;border:1px solid var(--glass-border);border-radius:var(--r-sm);padding:6px 10px;white-space:nowrap}
   .cat .label{display:none}
 }
 
 /* ---- controls ---- */
-.controls{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
-select,input[type=search],input[type=number]{font-family:var(--mono);font-size:12.5px;padding:7px 9px;border:1px solid var(--rule);background:var(--white);color:var(--ink);border-radius:2px}
+.controls{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px;padding:12px;border-radius:var(--r-md)}
+select,input[type=search],input[type=number]{font-family:var(--mono);font-size:12.5px;padding:8px 10px;border:1px solid var(--glass-border);background:rgba(255,255,255,.7);backdrop-filter:blur(8px);color:var(--ink);border-radius:var(--r-sm);transition:border-color .15s,box-shadow .15s}
+select:focus,input:focus{border-color:var(--green);box-shadow:0 0 0 3px rgba(46,94,69,.12)}
 input[type=search]{flex:1;min-width:180px}
-.btn{font-family:var(--mono);font-size:12px;padding:7px 12px;border:1px solid var(--ink);background:var(--ink);color:var(--white);border-radius:2px;cursor:pointer}
-.btn.ghost{background:none;color:var(--ink)}
+.btn{font-family:var(--mono);font-size:12px;padding:8px 14px;border:1px solid var(--ink);background:linear-gradient(135deg,#16221c,var(--ink));color:var(--white);border-radius:var(--r-sm);cursor:pointer;box-shadow:0 4px 12px rgba(16,22,26,.25);transition:transform .12s ease,box-shadow .12s ease}
+.btn:hover{transform:translateY(-1px);box-shadow:0 6px 16px rgba(16,22,26,.32)}
+.btn.ghost{background:rgba(255,255,255,.55);color:var(--ink);box-shadow:none}
+.btn.ghost:hover{background:rgba(255,255,255,.8)}
 
 /* ---- table ---- */
 .count{font-family:var(--mono);font-size:11.5px;color:var(--slate);margin-bottom:8px}
-table{width:100%;border-collapse:collapse;background:var(--white);border:1px solid var(--rule)}
+table{width:100%;border-collapse:collapse;background:transparent}
 th{font-family:var(--mono);font-size:10.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--slate);
-  text-align:left;padding:9px 10px;border-bottom:1px solid var(--rule);cursor:pointer;white-space:nowrap;font-weight:500}
-td{padding:10px;border-bottom:1px solid #e4e8e0;vertical-align:top;font-size:13.5px}
-tr.row{cursor:pointer}
-tr.row:hover td{background:var(--panel)}
+  text-align:left;padding:11px 12px;border-bottom:1px solid var(--glass-border);cursor:pointer;white-space:nowrap;font-weight:500;background:rgba(255,255,255,.35)}
+th:first-child{border-top-left-radius:var(--r-md)}
+th:last-child{border-top-right-radius:var(--r-md)}
+td{padding:11px 12px;border-bottom:1px solid rgba(195,202,191,.4);vertical-align:top;font-size:13.5px}
+tr.row{cursor:pointer;transition:background .12s ease}
+tr.row:hover td{background:rgba(46,94,69,.06)}
 .val{font-family:var(--mono);font-weight:600;white-space:nowrap}
 .val.none{color:var(--amber);font-weight:500}
-.tag{font-family:var(--mono);font-size:10.5px;padding:2px 6px;border:1px solid currentColor;border-radius:2px;white-space:nowrap}
+.tag{font-family:var(--mono);font-size:10.5px;padding:2px 7px;border:1px solid currentColor;border-radius:20px;white-space:nowrap}
 .tag.spend{color:var(--amber)}
 .tag.phys{color:var(--green)}
 .tag.other{color:var(--slate)}
 .catcell{font-family:var(--mono);font-weight:600;font-size:12.5px}
 .muted{color:var(--slate);font-size:12px}
 @media(max-width:700px){.hidesm{display:none}}
+.tablewrap{overflow:hidden;border-radius:var(--r-md)}
 
 /* ---- pager ---- */
 .pager{display:flex;align-items:center;gap:10px;justify-content:center;margin-top:16px;font-family:var(--mono);font-size:12.5px}
-.pager button{font-family:var(--mono);font-size:12px;padding:6px 11px;border:1px solid var(--rule);background:var(--white);color:var(--ink);border-radius:2px;cursor:pointer}
+.pager button{font-family:var(--mono);font-size:12px;padding:7px 12px;border:1px solid var(--glass-border);background:rgba(255,255,255,.6);backdrop-filter:blur(8px);color:var(--ink);border-radius:var(--r-sm);cursor:pointer;transition:background .12s}
 .pager button:disabled{opacity:.35;cursor:default}
-.pager button:not(:disabled):hover{border-color:var(--ink)}
-.pager input{width:60px;text-align:center}
+.pager button:not(:disabled):hover{background:rgba(255,255,255,.9)}
+.pager input{width:60px;text-align:center;border-radius:var(--r-sm)}
 
 /* ---- detail ---- */
-tr.detail td{background:var(--panel);border-bottom:2px solid var(--rule)}
+tr.detail td{background:rgba(255,255,255,.55);backdrop-filter:blur(10px);border-bottom:2px solid var(--glass-border)}
 .dl{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:12px 22px;margin:0 0 16px}
 .dl div{font-size:12.5px}
 .dl dt{font-family:var(--mono);font-size:10px;letter-spacing:.09em;text-transform:uppercase;color:var(--slate)}
 .dl dd{margin:2px 0 0;word-break:break-word}
-.calc{border-top:1px solid var(--rule);padding-top:12px;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
-.calcout{font-family:var(--mono);font-size:13px;background:var(--white);border:1px solid var(--rule);padding:7px 10px;border-radius:2px}
+.calc{border-top:1px solid var(--glass-border);padding-top:12px;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.calcout{font-family:var(--mono);font-size:13px;background:rgba(255,255,255,.75);border:1px solid var(--glass-border);padding:7px 10px;border-radius:var(--r-sm)}
 
 /* ---- prose ---- */
-section.doc{border-top:1px solid var(--rule);padding:44px 0}
+section.doc{padding:36px 0}
+section.doc>.glass{padding:clamp(20px,3vw,36px)}
 section.doc h2{font-family:var(--disp);font-size:26px;margin:0 0 6px;letter-spacing:-.01em}
 section.doc h3{font-family:var(--mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--slate);margin:26px 0 6px}
 section.doc p,section.doc li{max-width:72ch}
 .providers{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px;margin-top:20px}
-.provider{border:1px solid var(--rule);background:var(--white);padding:14px 16px;border-radius:2px}
+.provider{padding:16px 18px;border-radius:var(--r-md);transition:transform .15s ease,box-shadow .15s ease}
+.provider:hover{transform:translateY(-2px);box-shadow:0 12px 28px rgba(16,40,30,.16)}
 .provider .org{font-family:var(--disp);font-weight:700;font-size:15px;margin:0 0 2px}
 .provider .dataset{font-size:12.5px;color:#2b3339;margin:0 0 8px}
 .provider .cov{font-size:12px;color:var(--slate);margin:0 0 10px}
-.provider .price{font-family:var(--mono);font-size:11px;color:var(--amber);border-top:1px solid var(--rule);padding-top:8px;margin:0 0 8px}
+.provider .price{font-family:var(--mono);font-size:11px;color:var(--amber);border-top:1px solid var(--glass-border);padding-top:8px;margin:0 0 8px}
 .provider a{font-family:var(--mono);font-size:11.5px}
-.formula{font-family:var(--mono);font-size:13px;background:var(--white);border-left:3px solid var(--green);padding:10px 14px;margin:10px 0;max-width:72ch;overflow-x:auto}
-footer{border-top:1px solid var(--rule);padding:26px 0 50px;font-size:12.5px;color:var(--slate)}
+.formula{font-family:var(--mono);font-size:13px;background:rgba(255,255,255,.7);backdrop-filter:blur(6px);border-left:3px solid var(--green);padding:10px 14px;margin:10px 0;max-width:72ch;overflow-x:auto;border-radius:0 var(--r-sm) var(--r-sm) 0}
+footer{padding:26px 0 50px}
+footer .glass{padding:16px 22px;font-size:12.5px;color:var(--slate)}
 </style>
 </head>
 <body>
+<div class="bg-canvas" aria-hidden="true"></div>
 
 <header class="mast">
   <div class="wrap">
+   <div class="glass">
     <p class="eyebrow">Open data · GHG Protocol scopes 1–3 · 200+ countries and regions</p>
     <h1>An emission factor register that shows its receipts.</h1>
     <p class="lede">Every value here was extracted programmatically from an official government spreadsheet, API, or published table — UK Defra, US EPA (Hub + eGRID), Canada's ECCC, Eurostat/EEA across the EU, New Zealand's MfE, India's CEA, and Ember's national grid electricity intensity for ~200 countries including China, Germany, France, and Denmark — never typed in by hand. Each row carries the exact sheet, table, or API filter it came from, so you can re-open the source and check it yourself. Can't find what you need? There's a list of paid providers at the bottom of the page.</p>
@@ -125,22 +167,24 @@ footer{border-top:1px solid var(--rule);padding:26px 0 50px;font-size:12.5px;col
       <div><b id="s-n">–</b>factors filed</div>
       <div><b id="s-org">–</b>organizations</div>
       <div><b id="s-ds">–</b>datasets</div>
-      <div><b id="s-cty">–</b>countries / regions</div>
+      <div><b id="s-cty">–</b>countries</div>
+      <div><b id="s-rgn">–</b>sub-national regions</div>
       <div><b id="s-yr">–</b>year range</div>
     </div>
     <p class="warn"><strong>Read this first.</strong> Values are machine-read from the cited primary source, not hand-transcribed — <code>value_status: "verified"</code> means exactly that, and the exact sheet/table/row is in every record's <code>source_page_or_table</code>. This is still a research aid, not assurance-ready data: sources are revised annually, unit conventions vary (single-gas rows are in the native gas mass — kgCH4, gN2O — not force-converted to CO2e), and you are responsible for checking the row you rely on against the live <code>source_url</code> before you report.</p>
+   </div>
   </div>
 </header>
 
 <div class="wrap cols">
 
-  <nav class="spine" aria-label="Filter by category">
+  <nav class="spine glass" aria-label="Filter by category">
     <h2>Category spine</h2>
     <div class="catlist" id="spine"></div>
   </nav>
 
   <main>
-    <div class="controls">
+    <div class="controls glass">
       <input type="search" id="q" placeholder="Search activity, dataset, notes…" aria-label="Search factors">
       <select id="f-scope" aria-label="Filter by scope"></select>
       <select id="f-dataset" aria-label="Filter by dataset"></select>
@@ -154,6 +198,7 @@ footer{border-top:1px solid var(--rule);padding:26px 0 50px;font-size:12.5px;col
       <button class="btn ghost" id="json">Download JSON (filtered)</button>
     </div>
     <p class="count" id="count"></p>
+    <div class="tablewrap glass-strong">
     <table>
       <thead><tr>
         <th data-sort="category">Cat</th>
@@ -166,12 +211,14 @@ footer{border-top:1px solid var(--rule);padding:26px 0 50px;font-size:12.5px;col
       </tr></thead>
       <tbody id="rows"></tbody>
     </table>
+    </div>
     <div class="pager" id="pager"></div>
   </main>
 </div>
 
 <div class="wrap">
 <section class="doc" id="method">
+ <div class="glass">
   <h2>How to use these factors</h2>
 
   <h3>Spend-based</h3>
@@ -201,9 +248,11 @@ footer{border-top:1px solid var(--rule);padding:26px 0 50px;font-size:12.5px;col
 
   <h3>3.15 is not a lookup</h3>
   <p>Financed emissions are an attribution calculation — your share of an investee's emissions based on outstanding amount over enterprise value — not a factor you multiply spend by. Read PCAF before touching that row.</p>
+ </div>
 </section>
 
 <section class="doc" id="contribute">
+ <div class="glass">
   <h2>Adding a source</h2>
   <p>Data lives in <code>data/factors/*.json</code> — one file per source dataset, listed in <code>data/index.json</code>. Every record must validate against <code>data/schema.json</code>. The <code>etl/</code> folder holds the Python parser used for each dataset currently loaded (Defra, EPA Hub, eGRID) — add a new agency by writing a parser that reads the publisher's own spreadsheet or API and emits records in the schema shape, then register the output file in <code>data/index.json</code>. Three rules enforced by <code>etl/combine.py</code>:</p>
   <ul>
@@ -212,17 +261,22 @@ footer{border-top:1px solid var(--rule);padding:26px 0 50px;font-size:12.5px;col
     <li>Records from licensed datasets (ecoinvent, IEA) may carry the citation and units but not the value. Keep the licence intact.</li>
   </ul>
   <p>Agencies known but not yet loaded — IPCC EFDB, ADEME, Australia DCCEEW (currently unreachable from this build's network), and others — are listed with <code>"populated": false</code> in <code>data/sources.json</code> as the next places to extend this register.</p>
+ </div>
 </section>
 
 <section class="doc" id="buy">
+ <div class="glass">
   <h2>Need a factor that isn't here?</h2>
   <p>Everything on this page is free, open, government-published data. It doesn't cover everything — proprietary process-level LCA, licensed country grid data outside what's shown, and commercially maintained factor libraries sit behind paywalls for a reason: someone pays analysts to build and maintain them. If your activity isn't covered above, or you need supplier-specific or higher-resolution data, these are the commercial providers practitioners actually license from:</p>
   <div class="providers" id="providers"></div>
+ </div>
 </section>
 </div>
 
 <footer class="wrap">
+ <div class="glass">
   <p>Compilation released under CC BY 4.0. Each record remains under its own publisher's licence, stated in the row. This is a research aid; the reporting entity is responsible for verification.</p>
+ </div>
 </footer>
 
 <script>
@@ -266,7 +320,7 @@ async function loadProviders(){
   try{ sources=await (await fetch("data/sources.json")).json(); }catch(e){ return; }
   const paid=sources.filter(s=>s.free===false);
   $("#providers").innerHTML=paid.map(s=>`
-    <div class="provider">
+    <div class="provider glass">
       <p class="org">${esc(s.organization)}</p>
       <p class="dataset">${esc(s.dataset)}</p>
       <p class="cov">${esc(s.coverage)}</p>
@@ -279,7 +333,8 @@ function stats(){
   $("#s-n").textContent=fmtN(DATA.length);
   $("#s-org").textContent=new Set(DATA.map(d=>d.organization)).size;
   $("#s-ds").textContent=new Set(DATA.map(d=>d.dataset)).size;
-  $("#s-cty").textContent=new Set(DATA.map(d=>d.country+"|"+(d.region||""))).size;
+  $("#s-cty").textContent=fmtN(new Set(DATA.map(d=>d.country)).size);
+  $("#s-rgn").textContent=fmtN(new Set(DATA.map(d=>d.region).filter(Boolean)).size);
   const y=DATA.map(d=>d.year).sort((a,b)=>a-b);
   $("#s-yr").textContent=y[0]+"–"+y[y.length-1];
 }
