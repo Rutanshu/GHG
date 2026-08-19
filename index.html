@@ -257,7 +257,7 @@ async function load(){
   ]);
   COUNTRY_NAMES=names;
   DATA=chunks.flat();
-  buildSpine();buildFilters();stats();render();
+  buildFilters();stats();render();
   loadProviders();
 }
 
@@ -284,64 +284,109 @@ function stats(){
   $("#s-yr").textContent=y[0]+"–"+y[y.length-1];
 }
 
+// Each facet: how to read the field off a record, and how to compare it to the active filter value.
+const FACETS=[
+  {key:"cat",    get:d=>d.category,     active:()=>state.cat},
+  {key:"scope",  get:d=>String(d.scope),active:()=>state.scope},
+  {key:"dataset",get:d=>d.dataset,      active:()=>state.dataset},
+  {key:"country",get:d=>d.country,      active:()=>state.country},
+  {key:"region", get:d=>d.region,       active:()=>state.region},
+  {key:"year",   get:d=>String(d.year), active:()=>state.year},
+  {key:"org",    get:d=>d.organization, active:()=>state.org},
+  {key:"method", get:d=>d.method,       active:()=>state.method},
+  {key:"q",      get:null,              active:()=>state.q},
+];
+function matchesQ(d){
+  return [d.activity,d.dataset,d.notes,d.category_name,d.organization,d.region,countryName(d.country)]
+    .join(" ").toLowerCase().includes(state.q);
+}
+// True if record d satisfies every active filter except `exceptKey` — used both for the
+// final filtered table (exceptKey="") and for computing which options remain live in each
+// dropdown once the *other* active filters are applied (exceptKey=that dropdown's own key).
+function matches(d,exceptKey){
+  for(const f of FACETS){
+    if(f.key===exceptKey)continue;
+    const v=f.active();
+    if(!v)continue;
+    if(f.key==="q"){if(!matchesQ(d))return false;continue}
+    if(f.get(d)!==v)return false;
+  }
+  return true;
+}
+
 function buildSpine(){
+  const subset=DATA.filter(d=>matches(d,"cat"));
   const counts={};
-  DATA.forEach(d=>{counts[d.category]=(counts[d.category]||0)+1});
+  subset.forEach(d=>{counts[d.category]=(counts[d.category]||0)+1});
+  if(state.cat&&!counts[state.cat])state.cat=null;
   const cats=Object.keys(counts).sort((a,b)=>catRank(a)-catRank(b));
   $("#spine").innerHTML=cats.map(c=>{
     const label=CAT_LABELS[c]||c;
-    return `<button class="cat" data-cat="${esc(c)}" aria-pressed="false">
+    const pressed=state.cat===c;
+    return `<button class="cat" data-cat="${esc(c)}" aria-pressed="${pressed}">
       <span class="n">${esc(c)}</span><span class="label">${esc(label)}</span><span class="c">${fmtN(counts[c])}</span></button>`;
   }).join("");
+}
+
+const FILTER_SELECTS=[
+  {sel:"#f-scope",  key:"scope",  stateKey:"scope",  get:d=>String(d.scope),label:"All scopes"},
+  {sel:"#f-dataset",key:"dataset",stateKey:"dataset",get:d=>d.dataset,      label:"All datasets"},
+  {sel:"#f-country",key:"country",stateKey:"country",get:d=>d.country,      label:"All countries",labelFn:countryName},
+  {sel:"#f-region", key:"region", stateKey:"region", get:d=>d.region,       label:"All regions"},
+  {sel:"#f-year",   key:"year",   stateKey:"year",   get:d=>String(d.year), label:"All years"},
+  {sel:"#f-org",    key:"org",    stateKey:"org",    get:d=>d.organization, label:"All organizations"},
+  {sel:"#f-method", key:"method", stateKey:"method", get:d=>d.method,       label:"All methods"},
+];
+
+function fillFacet(f){
+  const subset=DATA.filter(d=>matches(d,f.key));
+  const vals=[...new Set(subset.map(f.get).filter(v=>v!=null&&v!==""))]
+    .sort((a,b)=>f.labelFn?f.labelFn(a).localeCompare(f.labelFn(b)):(a>b?1:a<b?-1:0));
+  const current=state[f.stateKey];
+  if(current&&!vals.includes(current)){
+    // The active selection for THIS facet no longer has any matches under the other
+    // active filters — clear it rather than leave a dead selection in place.
+    state[f.stateKey]="";
+  }
+  $(f.sel).innerHTML=`<option value="">${f.label} (${fmtN(vals.length)})</option>`
+    +vals.map(v=>`<option value="${esc(v)}">${esc(f.labelFn?f.labelFn(v):v)}</option>`).join("");
+  $(f.sel).value=state[f.stateKey]||"";
+}
+
+function refreshFacets(){
+  buildSpine();
+  FILTER_SELECTS.forEach(fillFacet);
+}
+
+function buildFilters(){
   $("#spine").addEventListener("click",e=>{
     const b=e.target.closest(".cat");if(!b)return;
     state.cat=state.cat===b.dataset.cat?null:b.dataset.cat;open=null;state.page=1;
-    [...document.querySelectorAll(".cat")].forEach(x=>x.setAttribute("aria-pressed",x.dataset.cat===state.cat));
-    render();
+    refreshFacets();render();
   });
-}
-
-function fill(sel,key,label,labelFn){
-  const vals=[...new Set(DATA.map(d=>d[key]).filter(v=>v!=null&&v!==""))]
-    .sort((a,b)=>labelFn?labelFn(a).localeCompare(labelFn(b)):(a>b?1:a<b?-1:0));
-  $(sel).innerHTML=`<option value="">${label}</option>`+vals.map(v=>`<option value="${esc(v)}">${esc(labelFn?labelFn(v):v)}</option>`).join("");
-}
-function buildFilters(){
-  fill("#f-scope","scope","All scopes");
-  fill("#f-dataset","dataset","All datasets");
-  fill("#f-country","country","All countries",countryName);
-  fill("#f-region","region","All regions");
-  fill("#f-year","year","All years");
-  fill("#f-org","organization","All organizations");
-  fill("#f-method","method","All methods");
-  const map={"#f-scope":"scope","#f-dataset":"dataset","#f-country":"country","#f-region":"region","#f-year":"year","#f-org":"org","#f-method":"method"};
-  Object.keys(map).forEach(s=>$(s).addEventListener("change",e=>{state[map[s]]=e.target.value;open=null;state.page=1;render()}));
-  $("#q").addEventListener("input",e=>{state.q=e.target.value.toLowerCase();open=null;state.page=1;render()});
+  FILTER_SELECTS.forEach(f=>$(f.sel).addEventListener("change",e=>{
+    state[f.stateKey]=e.target.value;open=null;state.page=1;
+    refreshFacets();render();
+  }));
+  $("#q").addEventListener("input",e=>{
+    state.q=e.target.value.toLowerCase();open=null;state.page=1;
+    refreshFacets();render();
+  });
   $("#reset").addEventListener("click",()=>{
     state={...state,cat:null,q:"",scope:"",dataset:"",country:"",region:"",year:"",org:"",method:"",page:1};open=null;
-    $("#q").value="";["#f-scope","#f-dataset","#f-country","#f-region","#f-year","#f-org","#f-method"].forEach(s=>$(s).value="");
-    [...document.querySelectorAll(".cat")].forEach(x=>x.setAttribute("aria-pressed","false"));
-    render();
+    $("#q").value="";
+    refreshFacets();render();
   });
   document.querySelectorAll("th[data-sort]").forEach(th=>th.addEventListener("click",()=>{
     const k=th.dataset.sort;state.dir=state.sort===k?-state.dir:1;state.sort=k;open=null;state.page=1;render();
   }));
   $("#csv").addEventListener("click",()=>dl("csv"));
   $("#json").addEventListener("click",()=>dl("json"));
+  refreshFacets();
 }
 
 function filtered(){
-  let r=DATA.filter(d=>
-    (!state.cat||d.category===state.cat)&&
-    (!state.scope||String(d.scope)===state.scope)&&
-    (!state.dataset||d.dataset===state.dataset)&&
-    (!state.country||d.country===state.country)&&
-    (!state.region||d.region===state.region)&&
-    (!state.year||String(d.year)===state.year)&&
-    (!state.org||d.organization===state.org)&&
-    (!state.method||d.method===state.method)&&
-    (!state.q||[d.activity,d.dataset,d.notes,d.category_name,d.organization,d.region,countryName(d.country)].join(" ").toLowerCase().includes(state.q))
-  );
+  let r=DATA.filter(d=>matches(d,""));
   const k=state.sort;
   return r.sort((a,b)=>{
     let x=a[k],y=b[k];
