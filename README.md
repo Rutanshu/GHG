@@ -1,17 +1,20 @@
 # Open GHG Emission Factor Register
 
-An open, citation-first catalogue of **15,634 real greenhouse-gas emission factors**, extracted programmatically from official government sources, for corporate carbon accounting under the GHG Protocol — filed by scope, GHG Protocol category, country/region, year, and publishing organization, with spend-based and physical (weight/activity) methods labelled separately.
+An open, citation-first catalogue of **20,371 real greenhouse-gas emission factors** from **6 government datasets across 5 countries**, extracted programmatically from official sources, for corporate carbon accounting under the GHG Protocol — filed by scope, GHG Protocol category, country/region, year, and publishing organization, with spend-based and physical (weight/activity) methods labelled separately.
 
 ## What's loaded right now
 
-| Source | Records | Coverage |
-|---|---:|---|
-| UK DESNZ/Defra — GHG Conversion Factors 2025 | 6,973 | Fuels, refrigerants, vehicles, electricity, heat & steam, well-to-tank, water, waste, materials, business travel, hotels, homeworking |
-| US EPA — GHG Emission Factors Hub (Jan 2025) | 1,029 | Stationary & mobile combustion, purchased electricity, steam/heat, transport & distribution, waste, business travel/commuting |
-| US EPA — eGRID2023 (rev2) | 7,632 | Electricity GHG rates at subregion, state, NERC region, balancing-authority, and national level |
-| **Total** | **15,634** | |
+| Source | Country | Records | Coverage |
+|---|---|---:|---|
+| UK DESNZ/Defra — GHG Conversion Factors 2025 | GB | 6,973 | Fuels, refrigerants, vehicles, electricity, heat & steam, well-to-tank, water, waste, materials, business travel, hotels, homeworking |
+| US EPA — GHG Emission Factors Hub (Jan 2025) | US | 1,029 | Stationary & mobile combustion, purchased electricity, steam/heat, transport & distribution, waste, business travel/commuting |
+| US EPA — eGRID2023 (rev2) | US | 7,632 | Electricity GHG rates at subregion, state, NERC region, balancing-authority, and national level |
+| NZ Ministry for the Environment — Measuring Emissions 2026 | NZ | 3,252 | Fuel, refrigerants, agriculture/forestry, purchased electricity/heat/steam, travel, freight, materials & waste, water, working-from-home |
+| India CEA — CO2 Baseline Database v21.0 | IN | 958 | National grid headline factors (weighted average, OM/BM/CM) plus ~950 individual thermal generating units' specific CO2 rate |
+| Canada ECCC — Federal GHG Offset System factors | CA | 527 | Natural gas (CO2/CH4/N2O) by province, NGL & refined petroleum products, provincial electricity intensity, biogas N2O |
+| **Total** | **5 countries** | **20,371** | |
 
-Every one of these values was read by a Python parser (`etl/`) directly out of the publisher's own spreadsheet — never typed by hand. `data/sources.json` also lists agencies known but not yet integrated (IPCC EFDB, IEA, ADEME, Environment Canada, Australia DCCEEW, India CEA, …) with `"populated": false`, as the map for extending this further.
+Every one of these values was read by a Python parser (`etl/`) directly out of the publisher's own spreadsheet or published HTML table — never typed by hand. `data/sources.json` also lists agencies known but not yet integrated (IPCC EFDB, IEA, ADEME, Australia DCCEEW — unreachable from this build environment, EU, Japan, …) with `"populated": false`, as the map for extending this further.
 
 ## Why it exists
 

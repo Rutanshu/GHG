@@ -19,6 +19,9 @@ SOURCES = [
     ("defra-2025", "out/defra-2025.json", "UK GHG Conversion Factors 2025 (Defra/DESNZ)"),
     ("epa-hub-2025", "out/epa-hub-2025.json", "US EPA GHG Emission Factors Hub 2025"),
     ("epa-egrid-2023", "out/epa-egrid-2023.json", "US EPA eGRID2023 electricity factors"),
+    ("nz-mfe-2026", "out/nz-mfe-2026.json", "NZ Ministry for the Environment — Measuring Emissions 2026"),
+    ("cea-india-2025", "out/cea-india-2025.json", "India CEA CO2 Baseline Database v21.0"),
+    ("eccc-canada-2026", "out/eccc-canada-2026.json", "Canada ECCC Federal GHG Offset System Emission Factors"),
 ]
 
 DEST_DIR = "../data/factors"

@@ -1,5 +1,5 @@
 {
-  "total_records": 15634,
+  "total_records": 20371,
   "files": [
     {
       "file": "data/factors/defra-2025.json",
@@ -18,6 +18,24 @@
       "label": "US EPA eGRID2023 electricity factors",
       "count": 7632,
       "size_kb": 7914.7
+    },
+    {
+      "file": "data/factors/nz-mfe-2026.json",
+      "label": "NZ Ministry for the Environment \u2014 Measuring Emissions 2026",
+      "count": 3252,
+      "size_kb": 3697.5
+    },
+    {
+      "file": "data/factors/cea-india-2025.json",
+      "label": "India CEA CO2 Baseline Database v21.0",
+      "count": 958,
+      "size_kb": 998.0
+    },
+    {
+      "file": "data/factors/eccc-canada-2026.json",
+      "label": "Canada ECCC Federal GHG Offset System Emission Factors",
+      "count": 527,
+      "size_kb": 586.1
     }
   ]
 }
