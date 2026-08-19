@@ -1,5 +1,5 @@
 {
-  "total_records": 28481,
+  "total_records": 28881,
   "files": [
     {
       "file": "data/factors/defra-2025.json",
@@ -42,6 +42,12 @@
       "label": "Eurostat GHG Intensity by NACE Sector (EU + EEA countries)",
       "count": 8079,
       "size_kb": 11210.0
+    },
+    {
+      "file": "data/factors/ember-electricity-2024.json",
+      "label": "Ember Yearly Electricity Data \u2014 national grid intensity (~200 countries)",
+      "count": 400,
+      "size_kb": 458.9
     }
   ]
 }

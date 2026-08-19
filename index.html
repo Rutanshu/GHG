@@ -118,9 +118,9 @@ footer{border-top:1px solid var(--rule);padding:26px 0 50px;font-size:12.5px;col
 
 <header class="mast">
   <div class="wrap">
-    <p class="eyebrow">Open data · GHG Protocol scopes 1–3 · UK · US · Canada · EU · New Zealand · India</p>
+    <p class="eyebrow">Open data · GHG Protocol scopes 1–3 · 200+ countries and regions</p>
     <h1>An emission factor register that shows its receipts.</h1>
-    <p class="lede">Every value here was extracted programmatically from an official government spreadsheet, API, or published table — UK Defra, US EPA (Hub + eGRID), Canada's ECCC, Eurostat/EEA across the EU, New Zealand's MfE, and India's CEA — never typed in by hand. Each row carries the exact sheet, table, or API filter it came from, so you can re-open the source and check it yourself. Can't find what you need? There's a list of paid providers at the bottom of the page.</p>
+    <p class="lede">Every value here was extracted programmatically from an official government spreadsheet, API, or published table — UK Defra, US EPA (Hub + eGRID), Canada's ECCC, Eurostat/EEA across the EU, New Zealand's MfE, India's CEA, and Ember's national grid electricity intensity for ~200 countries including China, Germany, France, and Denmark — never typed in by hand. Each row carries the exact sheet, table, or API filter it came from, so you can re-open the source and check it yourself. Can't find what you need? There's a list of paid providers at the bottom of the page.</p>
     <div class="stats">
       <div><b id="s-n">–</b>factors filed</div>
       <div><b id="s-org">–</b>organizations</div>
@@ -239,6 +239,8 @@ const $=s=>document.querySelector(s);
 const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const catRank=c=>c==="1"?-2:c==="2"?-1:c==="3"?100:parseFloat(c.split(".")[1]);
 const fmtN=n=>n.toLocaleString();
+let COUNTRY_NAMES={};
+const countryName=c=>COUNTRY_NAMES[c]||c;
 
 async function load(){
   let manifest;
@@ -249,7 +251,11 @@ async function load(){
     return;
   }
   $("#count").textContent=`Loading ${fmtN(manifest.total_records)} records from ${manifest.files.length} datasets…`;
-  const chunks=await Promise.all(manifest.files.map(f=>fetch(f.file).then(r=>r.json())));
+  const [chunks,names]=await Promise.all([
+    Promise.all(manifest.files.map(f=>fetch(f.file).then(r=>r.json()))),
+    fetch("data/country-names.json").then(r=>r.json()).catch(()=>({}))
+  ]);
+  COUNTRY_NAMES=names;
   DATA=chunks.flat();
   buildSpine();buildFilters();stats();render();
   loadProviders();
@@ -295,14 +301,15 @@ function buildSpine(){
   });
 }
 
-function fill(sel,key,label){
-  const vals=[...new Set(DATA.map(d=>d[key]).filter(v=>v!=null&&v!==""))].sort();
-  $(sel).innerHTML=`<option value="">${label}</option>`+vals.map(v=>`<option>${esc(v)}</option>`).join("");
+function fill(sel,key,label,labelFn){
+  const vals=[...new Set(DATA.map(d=>d[key]).filter(v=>v!=null&&v!==""))]
+    .sort((a,b)=>labelFn?labelFn(a).localeCompare(labelFn(b)):(a>b?1:a<b?-1:0));
+  $(sel).innerHTML=`<option value="">${label}</option>`+vals.map(v=>`<option value="${esc(v)}">${esc(labelFn?labelFn(v):v)}</option>`).join("");
 }
 function buildFilters(){
   fill("#f-scope","scope","All scopes");
   fill("#f-dataset","dataset","All datasets");
-  fill("#f-country","country","All countries");
+  fill("#f-country","country","All countries",countryName);
   fill("#f-region","region","All regions");
   fill("#f-year","year","All years");
   fill("#f-org","organization","All organizations");
@@ -333,7 +340,7 @@ function filtered(){
     (!state.year||String(d.year)===state.year)&&
     (!state.org||d.organization===state.org)&&
     (!state.method||d.method===state.method)&&
-    (!state.q||[d.activity,d.dataset,d.notes,d.category_name,d.organization,d.region].join(" ").toLowerCase().includes(state.q))
+    (!state.q||[d.activity,d.dataset,d.notes,d.category_name,d.organization,d.region,countryName(d.country)].join(" ").toLowerCase().includes(state.q))
   );
   const k=state.sort;
   return r.sort((a,b)=>{
@@ -367,7 +374,7 @@ function render(){
       <td>${esc(d.activity)}<div class="muted">${esc(d.dataset)}</div></td>
       <td>${methodTag(d.method)}</td>
       <td>${v}${unit}</td>
-      <td class="hidesm">${esc(d.country)}${region}</td>
+      <td class="hidesm">${esc(countryName(d.country))}${region}</td>
       <td class="hidesm"><span class="val">${d.year}</span></td>
       <td class="hidesm">${esc(d.organization)}</td></tr>`;
     return main+(open===d.id?detail(d):"");
@@ -412,7 +419,7 @@ function detail(d){
       ${f("Boundary",d.boundary)}
       ${f("Gases",(d.gases||[]).join(", "))}
       ${f("GWP basis",d.gwp_basis)}
-      ${f("Country / region",d.country+(d.region?" — "+d.region:""))}
+      ${f("Country / region",countryName(d.country)+(d.region?" — "+d.region:"")+" ("+d.country+")")}
       ${f("Reference year",d.year)}
       ${f("Published",d.publication_year)}
       ${f("Price year",d.price_year)}
@@ -444,8 +451,9 @@ function dl(kind){
   let blob,name;
   if(kind==="json"){blob=new Blob([JSON.stringify(rows,null,2)],{type:"application/json"});name="ghg-factors.json"}
   else{
-    const cols=["id","category","category_name","scope","activity","method","value","unit_numerator","unit_denominator","country","region","year","organization","dataset","price_year","boundary","gwp_basis","licence","value_status","source_url"];
-    const csv=[cols.join(",")].concat(rows.map(r=>cols.map(c=>`"${String(r[c]??"").replace(/"/g,'""')}"`).join(","))).join("\n");
+    const cols=["id","category","category_name","scope","activity","method","value","unit_numerator","unit_denominator","country","country_name","region","year","organization","dataset","price_year","boundary","gwp_basis","licence","value_status","source_url"];
+    const withNames=rows.map(r=>({...r,country_name:countryName(r.country)}));
+    const csv=[cols.join(",")].concat(withNames.map(r=>cols.map(c=>`"${String(r[c]??"").replace(/"/g,'""')}"`).join(","))).join("\n");
     blob=new Blob([csv],{type:"text/csv"});name="ghg-factors.csv";
   }
   const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=name;a.click();URL.revokeObjectURL(a.href);

@@ -59,6 +59,21 @@
     "url": "https://ec.europa.eu/eurostat/databrowser/view/env_ac_aeint_r2/default/table"
   },
   {
+    "organization": "Ember (independent energy think tank)",
+    "dataset": "Yearly Electricity Data — national grid emissions intensity",
+    "region": "~200 countries and economies, including China, Germany, France, Denmark",
+    "coverage": "Scope 2 location-based national grid electricity CO2e intensity (gCO2e/kWh), 2023-2024 — 400 factors loaded. Compiled by Ember from national statistics, Eurostat, EIA and utility data where an official single-source government grid factor does not exist for many of these countries.",
+    "methods": [
+      "activity-based"
+    ],
+    "cadence": "Annual",
+    "licence": "CC BY 4.0",
+    "free": true,
+    "populated": true,
+    "records_loaded": 400,
+    "url": "https://ember-energy.org/data/yearly-electricity-data/"
+  },
+  {
     "organization": "US EPA",
     "dataset": "eGRID2023 (Revision 2)",
     "region": "US — subregion, state, NERC region, balancing authority & national",
