@@ -251,19 +251,6 @@ footer .glass{padding:16px 22px;font-size:12.5px;color:var(--slate)}
  </div>
 </section>
 
-<section class="doc" id="contribute">
- <div class="glass">
-  <h2>Adding a source</h2>
-  <p>Data lives in <code>data/factors/*.json</code> — one file per source dataset, listed in <code>data/index.json</code>. Every record must validate against <code>data/schema.json</code>. The <code>etl/</code> folder holds the Python parser used for each dataset currently loaded (Defra, EPA Hub, eGRID) — add a new agency by writing a parser that reads the publisher's own spreadsheet or API and emits records in the schema shape, then register the output file in <code>data/index.json</code>. Three rules enforced by <code>etl/combine.py</code>:</p>
-  <ul>
-    <li>A record with <code>value_status: "verified"</code> must have a real number, read mechanically from the cited file — not typed in — and a <code>source_page_or_table</code> precise enough for someone else to find it.</li>
-    <li>Any <code>spend-based</code> record must declare its <code>price_year</code>.</li>
-    <li>Records from licensed datasets (ecoinvent, IEA) may carry the citation and units but not the value. Keep the licence intact.</li>
-  </ul>
-  <p>Agencies known but not yet loaded — IPCC EFDB, ADEME, Australia DCCEEW (currently unreachable from this build's network), and others — are listed with <code>"populated": false</code> in <code>data/sources.json</code> as the next places to extend this register.</p>
- </div>
-</section>
-
 <section class="doc" id="buy">
  <div class="glass">
   <h2>Need a factor that isn't here?</h2>
