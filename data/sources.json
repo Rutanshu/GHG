@@ -1,0 +1,206 @@
+[
+  {
+    "organization": "UK DESNZ / DEFRA",
+    "dataset": "GHG Conversion Factors for Company Reporting 2025",
+    "region": "GB (widely reused globally)",
+    "coverage": "Fuels, refrigerants, vehicles, electricity, heat & steam, WTT, water, waste, materials, business travel, hotels, homeworking \u2014 6,973 factors loaded, including per-gas (CO2/CH4/N2O) breakdowns",
+    "methods": [
+      "activity-based"
+    ],
+    "cadence": "Annual (mid-year)",
+    "licence": "Open Government Licence v3.0",
+    "free": true,
+    "populated": true,
+    "records_loaded": 6973,
+    "url": "https://www.gov.uk/government/publications/greenhouse-gas-reporting-conversion-factors-2025"
+  },
+  {
+    "organization": "US EPA",
+    "dataset": "GHG Emission Factors Hub (January 2025)",
+    "region": "US",
+    "coverage": "Stationary & mobile combustion, purchased electricity (eGRID summary), steam/heat, transport & distribution, waste, business travel/commuting \u2014 1,029 factors loaded",
+    "methods": [
+      "activity-based"
+    ],
+    "cadence": "Annual",
+    "licence": "US Government work \u2014 public domain",
+    "free": true,
+    "populated": true,
+    "records_loaded": 1029,
+    "url": "https://www.epa.gov/climateleadership/ghg-emission-factors-hub"
+  },
+  {
+    "organization": "US EPA",
+    "dataset": "Supply Chain GHG Emission Factors (USEEIO)",
+    "region": "US",
+    "coverage": "~1,000 NAICS commodity categories, kgCO2e per USD",
+    "methods": [
+      "spend-based"
+    ],
+    "cadence": "Periodic, tied to a stated price year",
+    "licence": "US Government work \u2014 public domain",
+    "free": true,
+    "populated": false,
+    "url": "https://www.epa.gov/climateleadership/supply-chain-greenhouse-gas-emission-factors"
+  },
+  {
+    "organization": "US EPA",
+    "dataset": "eGRID2023 (Revision 2)",
+    "region": "US \u2014 subregion, state, NERC region, balancing authority & national",
+    "coverage": "Electricity generation GHG emission rates (CO2, CH4, N2O) \u2014 output, input, combustion-only and non-baseload rates \u2014 7,632 factors loaded",
+    "methods": [
+      "activity-based"
+    ],
+    "cadence": "Annual",
+    "licence": "US Government work \u2014 public domain",
+    "free": true,
+    "populated": true,
+    "records_loaded": 7632,
+    "url": "https://www.epa.gov/egrid/download-data"
+  },
+  {
+    "organization": "IPCC",
+    "dataset": "Emission Factor Database (EFDB)",
+    "region": "GLOBAL",
+    "coverage": "Default factors underpinning national inventories",
+    "methods": [
+      "activity-based"
+    ],
+    "cadence": "Continuous",
+    "licence": "Free to use with attribution",
+    "free": true,
+    "url": "https://www.ipcc-nggip.iges.or.jp/EFDB/main.php",
+    "populated": false
+  },
+  {
+    "organization": "IEA",
+    "dataset": "Emissions Factors",
+    "region": "GLOBAL (country-level grids)",
+    "coverage": "Electricity and heat emission factors by country",
+    "methods": [
+      "activity-based"
+    ],
+    "cadence": "Annual",
+    "licence": "Proprietary \u2014 licence required",
+    "free": false,
+    "url": "https://www.iea.org/data-and-statistics/data-product/emissions-factors",
+    "populated": false
+  },
+  {
+    "organization": "ADEME",
+    "dataset": "Base Empreinte",
+    "region": "FR",
+    "coverage": "Broad French factor library, materials, energy, transport, food",
+    "methods": [
+      "activity-based",
+      "weight-based",
+      "spend-based"
+    ],
+    "cadence": "Continuous",
+    "licence": "Open licence (Etalab), attribution required",
+    "free": true,
+    "url": "https://base-empreinte.ademe.fr/",
+    "populated": false
+  },
+  {
+    "organization": "EXIOBASE consortium",
+    "dataset": "EXIOBASE 3 multi-regional input-output",
+    "region": "GLOBAL (44 countries + 5 rest-of-world regions)",
+    "coverage": "Sectoral spend-based intensities, useful outside the US",
+    "methods": [
+      "spend-based"
+    ],
+    "cadence": "Periodic releases",
+    "licence": "CC BY-SA (check release)",
+    "free": true,
+    "url": "https://www.exiobase.eu/",
+    "populated": false
+  },
+  {
+    "organization": "ecoinvent",
+    "dataset": "ecoinvent database",
+    "region": "GLOBAL",
+    "coverage": "Process-level LCA, very high granularity",
+    "methods": [
+      "weight-based",
+      "activity-based"
+    ],
+    "cadence": "Annual releases",
+    "licence": "Proprietary \u2014 licence required",
+    "free": false,
+    "url": "https://ecoinvent.org/",
+    "populated": false
+  },
+  {
+    "organization": "Environment and Climate Change Canada",
+    "dataset": "National Inventory Report annexes",
+    "region": "CA (provincial grids)",
+    "coverage": "Fuels and provincial electricity intensities",
+    "methods": [
+      "activity-based"
+    ],
+    "cadence": "Annual",
+    "licence": "Open Government Licence \u2014 Canada",
+    "free": true,
+    "url": "https://www.canada.ca/en/environment-climate-change/services/climate-change/greenhouse-gas-emissions/inventory.html",
+    "populated": false
+  },
+  {
+    "organization": "Australia DCCEEW",
+    "dataset": "National Greenhouse Accounts Factors",
+    "region": "AU",
+    "coverage": "Fuels, electricity by state, waste",
+    "methods": [
+      "activity-based"
+    ],
+    "cadence": "Annual",
+    "licence": "CC BY 4.0",
+    "free": true,
+    "url": "https://www.dcceew.gov.au/climate-change/publications/national-greenhouse-accounts-factors",
+    "populated": false
+  },
+  {
+    "organization": "Central Electricity Authority (India)",
+    "dataset": "CO2 Baseline Database for the Indian Power Sector",
+    "region": "IN",
+    "coverage": "Grid electricity emission factors",
+    "methods": [
+      "activity-based"
+    ],
+    "cadence": "Annual",
+    "licence": "Government of India \u2014 free to use",
+    "free": true,
+    "url": "https://cea.nic.in/co2-baseline-database/?lang=en",
+    "populated": false
+  },
+  {
+    "organization": "Smart Freight Centre",
+    "dataset": "GLEC Framework",
+    "region": "GLOBAL",
+    "coverage": "Logistics and freight intensities, tonne-km basis",
+    "methods": [
+      "activity-based"
+    ],
+    "cadence": "Periodic",
+    "licence": "Free registration",
+    "free": true,
+    "url": "https://www.smartfreightcentre.org/en/glec-framework/",
+    "populated": false
+  },
+  {
+    "organization": "Climatiq",
+    "dataset": "Climatiq aggregated factor API",
+    "region": "GLOBAL",
+    "coverage": "Aggregates many of the above under one schema",
+    "methods": [
+      "spend-based",
+      "activity-based",
+      "weight-based"
+    ],
+    "cadence": "Continuous",
+    "licence": "Freemium \u2014 check per-source licence",
+    "free": false,
+    "url": "https://www.climatiq.io/",
+    "populated": false
+  }
+]

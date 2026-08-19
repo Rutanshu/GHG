@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Open GHG Factor Register</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#10161a; --paper:#e6e9e3; --panel:#f3f5f0; --rule:#c3cabf;
+  --green:#2e5e45; --amber:#a8621b; --slate:#5c6862; --white:#fbfcfa;
+  --mono:'IBM Plex Mono',ui-monospace,monospace;
+  --sans:'IBM Plex Sans',system-ui,sans-serif;
+  --disp:'Space Grotesk',var(--sans);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.55}
+a{color:var(--green)}
+:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+.wrap{max-width:1240px;margin:0 auto;padding:0 20px}
+
+/* ---- masthead ---- */
+header.mast{border-bottom:1px solid var(--rule);padding:38px 0 26px}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--slate)}
+h1{font-family:var(--disp);font-weight:700;font-size:clamp(32px,5.2vw,58px);line-height:1.02;margin:.35em 0 .3em;letter-spacing:-.02em;max-width:16ch}
+.lede{max-width:62ch;color:#2b3339}
+.stats{display:flex;flex-wrap:wrap;gap:28px;margin-top:22px;font-family:var(--mono);font-size:12px;color:var(--slate)}
+.stats b{display:block;font-size:23px;color:var(--ink);font-weight:600}
+
+.warn{margin:22px 0 0;border-left:3px solid var(--amber);background:#f7efe4;padding:12px 16px;font-size:13.5px;max-width:78ch}
+
+/* ---- layout ---- */
+.cols{display:grid;grid-template-columns:200px 1fr;gap:34px;padding:30px 0 70px;align-items:start}
+@media(max-width:880px){.cols{grid-template-columns:1fr;gap:20px}}
+
+/* ---- spine (signature) ---- */
+.spine{position:sticky;top:16px}
+.spine h2{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--slate);margin:0 0 10px;font-weight:500}
+.cat{display:grid;grid-template-columns:38px 1fr auto;align-items:baseline;gap:8px;width:100%;text-align:left;
+  background:none;border:0;border-top:1px solid var(--rule);padding:7px 2px;cursor:pointer;font-family:var(--sans);font-size:12.5px;color:var(--slate)}
+.cat:last-child{border-bottom:1px solid var(--rule)}
+.cat .n{font-family:var(--mono);font-size:12px;font-weight:600;color:var(--ink)}
+.cat .c{font-family:var(--mono);font-size:11px}
+.cat:hover{color:var(--ink)}
+.cat[aria-pressed="true"]{color:var(--white);background:var(--green)}
+.cat[aria-pressed="true"] .n{color:var(--white)}
+.cat[aria-pressed="true"] .c{color:#cfe0d6}
+@media(max-width:880px){
+  .spine{position:static}
+  .catlist{display:flex;overflow-x:auto;gap:6px;padding-bottom:6px}
+  .cat{width:auto;grid-template-columns:auto;border:1px solid var(--rule);border-radius:2px;padding:6px 10px;white-space:nowrap}
+  .cat .label{display:none}
+}
+
+/* ---- controls ---- */
+.controls{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+select,input[type=search],input[type=number]{font-family:var(--mono);font-size:12.5px;padding:7px 9px;border:1px solid var(--rule);background:var(--white);color:var(--ink);border-radius:2px}
+input[type=search]{flex:1;min-width:180px}
+.btn{font-family:var(--mono);font-size:12px;padding:7px 12px;border:1px solid var(--ink);background:var(--ink);color:var(--white);border-radius:2px;cursor:pointer}
+.btn.ghost{background:none;color:var(--ink)}
+
+/* ---- table ---- */
+.count{font-family:var(--mono);font-size:11.5px;color:var(--slate);margin-bottom:8px}
+table{width:100%;border-collapse:collapse;background:var(--white);border:1px solid var(--rule)}
+th{font-family:var(--mono);font-size:10.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--slate);
+  text-align:left;padding:9px 10px;border-bottom:1px solid var(--rule);cursor:pointer;white-space:nowrap;font-weight:500}
+td{padding:10px;border-bottom:1px solid #e4e8e0;vertical-align:top;font-size:13.5px}
+tr.row{cursor:pointer}
+tr.row:hover td{background:var(--panel)}
+.val{font-family:var(--mono);font-weight:600;white-space:nowrap}
+.val.none{color:var(--amber);font-weight:500}
+.tag{font-family:var(--mono);font-size:10.5px;padding:2px 6px;border:1px solid currentColor;border-radius:2px;white-space:nowrap}
+.tag.spend{color:var(--amber)}
+.tag.phys{color:var(--green)}
+.tag.other{color:var(--slate)}
+.catcell{font-family:var(--mono);font-weight:600;font-size:12.5px}
+.muted{color:var(--slate);font-size:12px}
+@media(max-width:700px){.hidesm{display:none}}
+
+/* ---- pager ---- */
+.pager{display:flex;align-items:center;gap:10px;justify-content:center;margin-top:16px;font-family:var(--mono);font-size:12.5px}
+.pager button{font-family:var(--mono);font-size:12px;padding:6px 11px;border:1px solid var(--rule);background:var(--white);color:var(--ink);border-radius:2px;cursor:pointer}
+.pager button:disabled{opacity:.35;cursor:default}
+.pager button:not(:disabled):hover{border-color:var(--ink)}
+.pager input{width:60px;text-align:center}
+
+/* ---- detail ---- */
+tr.detail td{background:var(--panel);border-bottom:2px solid var(--rule)}
+.dl{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:12px 22px;margin:0 0 16px}
+.dl div{font-size:12.5px}
+.dl dt{font-family:var(--mono);font-size:10px;letter-spacing:.09em;text-transform:uppercase;color:var(--slate)}
+.dl dd{margin:2px 0 0;word-break:break-word}
+.calc{border-top:1px solid var(--rule);padding-top:12px;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.calcout{font-family:var(--mono);font-size:13px;background:var(--white);border:1px solid var(--rule);padding:7px 10px;border-radius:2px}
+
+/* ---- prose ---- */
+section.doc{border-top:1px solid var(--rule);padding:44px 0}
+section.doc h2{font-family:var(--disp);font-size:26px;margin:0 0 6px;letter-spacing:-.01em}
+section.doc h3{font-family:var(--mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--slate);margin:26px 0 6px}
+section.doc p,section.doc li{max-width:72ch}
+.formula{font-family:var(--mono);font-size:13px;background:var(--white);border-left:3px solid var(--green);padding:10px 14px;margin:10px 0;max-width:72ch;overflow-x:auto}
+footer{border-top:1px solid var(--rule);padding:26px 0 50px;font-size:12.5px;color:var(--slate)}
+</style>
+</head>
+<body>
+
+<header class="mast">
+  <div class="wrap">
+    <p class="eyebrow">Open data · GHG Protocol scopes 1–3 · DEFRA · US EPA · eGRID</p>
+    <h1>An emission factor register that shows its receipts.</h1>
+    <p class="lede">Every value here was extracted programmatically from an official government spreadsheet — the UK Government's GHG Conversion Factors 2025, the US EPA GHG Emission Factors Hub, and EPA's eGRID2023 electricity dataset — never typed in by hand. Each row carries the exact sheet, table, and unit it came from, so you can re-open the source and check it yourself.</p>
+    <div class="stats">
+      <div><b id="s-n">–</b>factors filed</div>
+      <div><b id="s-org">–</b>organizations</div>
+      <div><b id="s-ds">–</b>datasets</div>
+      <div><b id="s-cty">–</b>countries / regions</div>
+      <div><b id="s-yr">–</b>year range</div>
+    </div>
+    <p class="warn"><strong>Read this first.</strong> Values are machine-read from the cited primary source, not hand-transcribed — <code>value_status: "verified"</code> means exactly that, and the exact sheet/table/row is in every record's <code>source_page_or_table</code>. This is still a research aid, not assurance-ready data: sources are revised annually, unit conventions vary (single-gas rows are in the native gas mass — kgCH4, gN2O — not force-converted to CO2e), and you are responsible for checking the row you rely on against the live <code>source_url</code> before you report.</p>
+  </div>
+</header>
+
+<div class="wrap cols">
+
+  <nav class="spine" aria-label="Filter by category">
+    <h2>Category spine</h2>
+    <div class="catlist" id="spine"></div>
+  </nav>
+
+  <main>
+    <div class="controls">
+      <input type="search" id="q" placeholder="Search activity, dataset, notes…" aria-label="Search factors">
+      <select id="f-scope" aria-label="Filter by scope"></select>
+      <select id="f-dataset" aria-label="Filter by dataset"></select>
+      <select id="f-country" aria-label="Filter by country"></select>
+      <select id="f-region" aria-label="Filter by region"></select>
+      <select id="f-year" aria-label="Filter by year"></select>
+      <select id="f-org" aria-label="Filter by organization"></select>
+      <select id="f-method" aria-label="Filter by method"></select>
+      <button class="btn ghost" id="reset">Clear filters</button>
+      <button class="btn" id="csv">Download CSV (filtered)</button>
+      <button class="btn ghost" id="json">Download JSON (filtered)</button>
+    </div>
+    <p class="count" id="count"></p>
+    <table>
+      <thead><tr>
+        <th data-sort="category">Cat</th>
+        <th data-sort="activity">Activity</th>
+        <th data-sort="method">Method</th>
+        <th data-sort="value">Factor</th>
+        <th data-sort="country" class="hidesm">Country</th>
+        <th data-sort="year" class="hidesm">Year</th>
+        <th data-sort="organization" class="hidesm">Organization</th>
+      </tr></thead>
+      <tbody id="rows"></tbody>
+    </table>
+    <div class="pager" id="pager"></div>
+  </main>
+</div>
+
+<div class="wrap">
+<section class="doc" id="method">
+  <h2>How to use these factors</h2>
+
+  <h3>Spend-based</h3>
+  <p>You multiply money by an economic input-output intensity. Use it when you know what you paid but not what you received — long-tail suppliers, services, early screening years.</p>
+  <div class="formula">kgCO2e = spend (in the factor's price-year currency) × factor (kgCO2e / currency unit)</div>
+  <p>Two traps. First, price is a poor proxy for physical impact: a premium supplier with a cleaner process looks worse because it charges more. Second, inflation. If your spend is in 2025 dollars and the factor's <code>price_year</code> is 2022, deflate your spend to 2022 first, or you will overstate emissions by the intervening inflation. Every spend-based record here carries a <code>price_year</code> for exactly that reason.</p>
+
+  <h3>Weight-based and activity-based</h3>
+  <p>You multiply a physical quantity — kilograms, kWh, litres, tonne-kilometres, passenger-kilometres — by a physical intensity. Always better than spend-based where the data exists, because it responds to what you actually bought rather than what it cost.</p>
+  <div class="formula">kgCO2e = quantity × factor (kgCO2e / physical unit)</div>
+
+  <h3>Supplier-specific</h3>
+  <p>Your supplier gives you their own verified product footprint. This replaces both of the above and is the only route that rewards a supplier for decarbonising. The register cannot hold these — they are yours.</p>
+
+  <h3>The data quality ladder</h3>
+  <p>Supplier-specific → physical average-data → hybrid → spend-based. Record which rung each line of your inventory sits on. A footprint built entirely on spend-based factors is a screening exercise, not a measurement, and should be described that way.</p>
+
+  <h3>Double counting, the three usual places</h3>
+  <ul>
+    <li><strong>3.1 vs 3.3.</strong> Cradle-to-gate purchased-goods factors often already include the fuel supply chain. Do not add well-to-tank again on top.</li>
+    <li><strong>3.4 vs 3.9.</strong> A freight leg belongs to whoever pays for it. Upstream if you pay, downstream if your customer does.</li>
+    <li><strong>Scope 1 vs 3.3.</strong> Combustion is scope 1; extracting, refining, and delivering that fuel is 3.3. Different factors, both needed, never the same number twice.</li>
+  </ul>
+
+  <h3>Scope 2, twice</h3>
+  <p>Report a location-based figure (grid average where you consume) and a market-based figure (your contractual instruments). They are not alternatives; the GHG Protocol asks for both.</p>
+
+  <h3>3.15 is not a lookup</h3>
+  <p>Financed emissions are an attribution calculation — your share of an investee's emissions based on outstanding amount over enterprise value — not a factor you multiply spend by. Read PCAF before touching that row.</p>
+</section>
+
+<section class="doc" id="contribute">
+  <h2>Adding a source</h2>
+  <p>Data lives in <code>data/factors/*.json</code> — one file per source dataset, listed in <code>data/index.json</code>. Every record must validate against <code>data/schema.json</code>. The <code>etl/</code> folder holds the Python parser used for each dataset currently loaded (Defra, EPA Hub, eGRID) — add a new agency by writing a parser that reads the publisher's own spreadsheet or API and emits records in the schema shape, then register the output file in <code>data/index.json</code>. Three rules enforced by <code>etl/combine.py</code>:</p>
+  <ul>
+    <li>A record with <code>value_status: "verified"</code> must have a real number, read mechanically from the cited file — not typed in — and a <code>source_page_or_table</code> precise enough for someone else to find it.</li>
+    <li>Any <code>spend-based</code> record must declare its <code>price_year</code>.</li>
+    <li>Records from licensed datasets (ecoinvent, IEA) may carry the citation and units but not the value. Keep the licence intact.</li>
+  </ul>
+  <p>Agencies known but not yet loaded — IPCC EFDB, IEA, ADEME, Environment Canada, Australia DCCEEW, India CEA, and others — are listed with <code>"populated": false</code> in <code>data/sources.json</code> as the next places to extend this register.</p>
+</section>
+</div>
+
+<footer class="wrap">
+  <p>Compilation released under CC BY 4.0. Each record remains under its own publisher's licence, stated in the row. This is a research aid; the reporting entity is responsible for verification.</p>
+</footer>
+
+<script>
+const CAT_LABELS={"1":"Scope 1 direct","2":"Scope 2 purchased energy","3":"Scope 3 (unclassified)",
+  "3.1":"Purchased goods and services","3.2":"Capital goods","3.3":"Fuel- and energy-related",
+  "3.4":"Upstream transport","3.5":"Waste in operations","3.6":"Business travel",
+  "3.7":"Employee commuting","3.8":"Upstream leased assets","3.9":"Downstream transport",
+  "3.10":"Processing of sold products","3.11":"Use of sold products","3.12":"End-of-life treatment",
+  "3.13":"Downstream leased assets","3.14":"Franchises","3.15":"Investments"};
+const PAGE_SIZE=50;
+let DATA=[],state={cat:null,q:"",scope:"",dataset:"",country:"",region:"",year:"",org:"",method:"",sort:"category",dir:1,page:1},open=null;
+
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const catRank=c=>c==="1"?-2:c==="2"?-1:c==="3"?100:parseFloat(c.split(".")[1]);
+const fmtN=n=>n.toLocaleString();
+
+async function load(){
+  let manifest;
+  try{
+    manifest=await (await fetch("data/index.json")).json();
+  }catch(e){
+    $("#rows").innerHTML='<tr><td colspan="7">Could not load <code>data/index.json</code>. Opening this file directly from disk blocks the fetch. Run <code>python3 -m http.server</code> in the repo folder and open <code>http://localhost:8000</code>, or deploy to GitHub Pages.</td></tr>';
+    return;
+  }
+  $("#count").textContent=`Loading ${fmtN(manifest.total_records)} records from ${manifest.files.length} datasets…`;
+  const chunks=await Promise.all(manifest.files.map(f=>fetch(f.file).then(r=>r.json())));
+  DATA=chunks.flat();
+  buildSpine();buildFilters();stats();render();
+}
+
+function stats(){
+  $("#s-n").textContent=fmtN(DATA.length);
+  $("#s-org").textContent=new Set(DATA.map(d=>d.organization)).size;
+  $("#s-ds").textContent=new Set(DATA.map(d=>d.dataset)).size;
+  $("#s-cty").textContent=new Set(DATA.map(d=>d.country+"|"+(d.region||""))).size;
+  const y=DATA.map(d=>d.year).sort((a,b)=>a-b);
+  $("#s-yr").textContent=y[0]+"–"+y[y.length-1];
+}
+
+function buildSpine(){
+  const counts={};
+  DATA.forEach(d=>{counts[d.category]=(counts[d.category]||0)+1});
+  const cats=Object.keys(counts).sort((a,b)=>catRank(a)-catRank(b));
+  $("#spine").innerHTML=cats.map(c=>{
+    const label=CAT_LABELS[c]||c;
+    return `<button class="cat" data-cat="${esc(c)}" aria-pressed="false">
+      <span class="n">${esc(c)}</span><span class="label">${esc(label)}</span><span class="c">${fmtN(counts[c])}</span></button>`;
+  }).join("");
+  $("#spine").addEventListener("click",e=>{
+    const b=e.target.closest(".cat");if(!b)return;
+    state.cat=state.cat===b.dataset.cat?null:b.dataset.cat;open=null;state.page=1;
+    [...document.querySelectorAll(".cat")].forEach(x=>x.setAttribute("aria-pressed",x.dataset.cat===state.cat));
+    render();
+  });
+}
+
+function fill(sel,key,label){
+  const vals=[...new Set(DATA.map(d=>d[key]).filter(v=>v!=null&&v!==""))].sort();
+  $(sel).innerHTML=`<option value="">${label}</option>`+vals.map(v=>`<option>${esc(v)}</option>`).join("");
+}
+function buildFilters(){
+  fill("#f-scope","scope","All scopes");
+  fill("#f-dataset","dataset","All datasets");
+  fill("#f-country","country","All countries");
+  fill("#f-region","region","All regions");
+  fill("#f-year","year","All years");
+  fill("#f-org","organization","All organizations");
+  fill("#f-method","method","All methods");
+  const map={"#f-scope":"scope","#f-dataset":"dataset","#f-country":"country","#f-region":"region","#f-year":"year","#f-org":"org","#f-method":"method"};
+  Object.keys(map).forEach(s=>$(s).addEventListener("change",e=>{state[map[s]]=e.target.value;open=null;state.page=1;render()}));
+  $("#q").addEventListener("input",e=>{state.q=e.target.value.toLowerCase();open=null;state.page=1;render()});
+  $("#reset").addEventListener("click",()=>{
+    state={...state,cat:null,q:"",scope:"",dataset:"",country:"",region:"",year:"",org:"",method:"",page:1};open=null;
+    $("#q").value="";["#f-scope","#f-dataset","#f-country","#f-region","#f-year","#f-org","#f-method"].forEach(s=>$(s).value="");
+    [...document.querySelectorAll(".cat")].forEach(x=>x.setAttribute("aria-pressed","false"));
+    render();
+  });
+  document.querySelectorAll("th[data-sort]").forEach(th=>th.addEventListener("click",()=>{
+    const k=th.dataset.sort;state.dir=state.sort===k?-state.dir:1;state.sort=k;open=null;state.page=1;render();
+  }));
+  $("#csv").addEventListener("click",()=>dl("csv"));
+  $("#json").addEventListener("click",()=>dl("json"));
+}
+
+function filtered(){
+  let r=DATA.filter(d=>
+    (!state.cat||d.category===state.cat)&&
+    (!state.scope||String(d.scope)===state.scope)&&
+    (!state.dataset||d.dataset===state.dataset)&&
+    (!state.country||d.country===state.country)&&
+    (!state.region||d.region===state.region)&&
+    (!state.year||String(d.year)===state.year)&&
+    (!state.org||d.organization===state.org)&&
+    (!state.method||d.method===state.method)&&
+    (!state.q||[d.activity,d.dataset,d.notes,d.category_name,d.organization,d.region].join(" ").toLowerCase().includes(state.q))
+  );
+  const k=state.sort;
+  return r.sort((a,b)=>{
+    let x=a[k],y=b[k];
+    if(k==="category"){x=catRank(a.category);y=catRank(b.category)}
+    if(k==="value"){x=a.value??Infinity;y=b.value??Infinity}
+    return (x>y?1:x<y?-1:0)*state.dir;
+  });
+}
+
+function methodTag(m){
+  const cls=m==="spend-based"?"spend":(m==="weight-based"||m==="activity-based")?"phys":"other";
+  return `<span class="tag ${cls}">${esc(m)}</span>`;
+}
+
+function render(){
+  const rows=filtered();
+  const totalPages=Math.max(1,Math.ceil(rows.length/PAGE_SIZE));
+  if(state.page>totalPages)state.page=totalPages;
+  const startIdx=(state.page-1)*PAGE_SIZE;
+  const pageRows=rows.slice(startIdx,startIdx+PAGE_SIZE);
+
+  $("#count").textContent=`${fmtN(rows.length)} of ${fmtN(DATA.length)} records${state.cat?" · category "+state.cat:""} — showing ${startIdx+1}–${Math.min(startIdx+PAGE_SIZE,rows.length)}`;
+  $("#rows").innerHTML=pageRows.map(d=>{
+    const v=d.value==null?`<span class="val none">not filed</span>`
+      :`<span class="val">${d.value}</span>`;
+    const unit=`<div class="muted">${esc(d.unit_numerator)} / ${esc(d.unit_denominator)}</div>`;
+    const region=d.region?` <span class="muted">(${esc(d.region)})</span>`:"";
+    const main=`<tr class="row" data-id="${d.id}">
+      <td class="catcell">${esc(d.category)}</td>
+      <td>${esc(d.activity)}<div class="muted">${esc(d.dataset)}</div></td>
+      <td>${methodTag(d.method)}</td>
+      <td>${v}${unit}</td>
+      <td class="hidesm">${esc(d.country)}${region}</td>
+      <td class="hidesm"><span class="val">${d.year}</span></td>
+      <td class="hidesm">${esc(d.organization)}</td></tr>`;
+    return main+(open===d.id?detail(d):"");
+  }).join("")||`<tr><td colspan="7">Nothing matches those filters.</td></tr>`;
+
+  document.querySelectorAll("tr.row").forEach(tr=>tr.addEventListener("click",()=>{
+    open=open===tr.dataset.id?null:tr.dataset.id;render();
+  }));
+  const cf=$("#calc-in");
+  if(cf){cf.addEventListener("input",runCalc);runCalc();}
+
+  renderPager(totalPages);
+}
+
+function renderPager(totalPages){
+  const p=state.page;
+  $("#pager").innerHTML=`
+    <button ${p<=1?"disabled":""} data-go="1">« first</button>
+    <button ${p<=1?"disabled":""} data-go="prev">‹ prev</button>
+    <span>page <input type="number" id="pageinput" value="${p}" min="1" max="${totalPages}"> of ${fmtN(totalPages)}</span>
+    <button ${p>=totalPages?"disabled":""} data-go="next">next ›</button>
+    <button ${p>=totalPages?"disabled":""} data-go="${totalPages}">last »</button>`;
+  $("#pager").querySelectorAll("button").forEach(b=>b.addEventListener("click",()=>{
+    const go=b.dataset.go;
+    state.page=go==="prev"?state.page-1:go==="next"?state.page+1:parseInt(go);
+    open=null;render();window.scrollTo({top:$("main").offsetTop-10,behavior:"smooth"});
+  }));
+  const pi=$("#pageinput");
+  pi.addEventListener("change",()=>{
+    const n=parseInt(pi.value);
+    if(!isNaN(n)){state.page=Math.min(Math.max(1,n),totalPages);open=null;render();}
+  });
+}
+
+function detail(d){
+  const f=(l,v)=>v?`<div><dt>${l}</dt><dd>${esc(v)}</dd></div>`:"";
+  return `<tr class="detail"><td colspan="7">
+    <dl class="dl">
+      ${f("Category",d.category+" — "+d.category_name)}
+      ${f("Scope","Scope "+d.scope)}
+      ${f("Method",d.method)}
+      ${f("Boundary",d.boundary)}
+      ${f("Gases",(d.gases||[]).join(", "))}
+      ${f("GWP basis",d.gwp_basis)}
+      ${f("Country / region",d.country+(d.region?" — "+d.region:""))}
+      ${f("Reference year",d.year)}
+      ${f("Published",d.publication_year)}
+      ${f("Price year",d.price_year)}
+      ${f("Licence",d.licence)}
+      ${f("Source table",d.source_page_or_table)}
+      <div><dt>Source</dt><dd><a href="${esc(d.source_url)}" target="_blank" rel="noopener">${esc(new URL(d.source_url).hostname)}</a></dd></div>
+      ${f("Value status",d.value_status)}
+      ${d.currency_deflator_note?f("Currency note",d.currency_deflator_note):""}
+      ${d.notes?f("Notes",d.notes):""}
+    </dl>
+    <div class="calc">
+      <label class="muted" for="calc-in">Activity amount (${esc(d.unit_denominator)})</label>
+      <input type="number" id="calc-in" value="1000" step="any" data-v="${d.value==null?"":d.value}" data-u="${esc(d.unit_numerator)}">
+      <span class="calcout" id="calc-out"></span>
+    </div>
+  </td></tr>`;
+}
+
+function runCalc(){
+  const el=$("#calc-in"),out=$("#calc-out");if(!el||!out)return;
+  const v=el.dataset.v;
+  if(v===""){out.textContent="No factor filed yet — add the value from the source, then this calculates.";return}
+  const n=parseFloat(el.value);
+  out.textContent=isNaN(n)?"Enter a number":`${n} × ${v} = ${(n*parseFloat(v)).toLocaleString(undefined,{maximumFractionDigits:4})} ${el.dataset.u}`;
+}
+
+function dl(kind){
+  const rows=filtered();
+  let blob,name;
+  if(kind==="json"){blob=new Blob([JSON.stringify(rows,null,2)],{type:"application/json"});name="ghg-factors.json"}
+  else{
+    const cols=["id","category","category_name","scope","activity","method","value","unit_numerator","unit_denominator","country","region","year","organization","dataset","price_year","boundary","gwp_basis","licence","value_status","source_url"];
+    const csv=[cols.join(",")].concat(rows.map(r=>cols.map(c=>`"${String(r[c]??"").replace(/"/g,'""')}"`).join(","))).join("\n");
+    blob=new Blob([csv],{type:"text/csv"});name="ghg-factors.csv";
+  }
+  const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=name;a.click();URL.revokeObjectURL(a.href);
+}
+
+load();
+</script>
+</body>
+</html>

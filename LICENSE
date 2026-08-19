@@ -1,0 +1,20 @@
+Creative Commons Attribution 4.0 International (CC BY 4.0)
+
+Copyright (c) 2026, the Open GHG Emission Factor Register contributors.
+
+This work (the compilation, the application code, and the ETL pipeline) is
+licensed under the Creative Commons Attribution 4.0 International License.
+To view a copy of this license, visit:
+
+    https://creativecommons.org/licenses/by/4.0/
+
+You are free to share and adapt this material for any purpose, even
+commercially, as long as you give appropriate credit.
+
+---
+
+Note on the underlying data: each individual emission-factor record remains
+subject to its original publisher's own licence, as stated in that record's
+`licence` field (e.g. UK Open Government Licence v3.0, US Government work /
+public domain). This CC BY 4.0 licence covers the compilation, schema,
+application, and ETL code — not a re-licensing of the source data itself.

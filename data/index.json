@@ -1,0 +1,23 @@
+{
+  "total_records": 15634,
+  "files": [
+    {
+      "file": "data/factors/defra-2025.json",
+      "label": "UK GHG Conversion Factors 2025 (Defra/DESNZ)",
+      "count": 6973,
+      "size_kb": 8111.1
+    },
+    {
+      "file": "data/factors/epa-hub-2025.json",
+      "label": "US EPA GHG Emission Factors Hub 2025",
+      "count": 1029,
+      "size_kb": 946.3
+    },
+    {
+      "file": "data/factors/epa-egrid-2023.json",
+      "label": "US EPA eGRID2023 electricity factors",
+      "count": 7632,
+      "size_kb": 7914.7
+    }
+  ]
+}

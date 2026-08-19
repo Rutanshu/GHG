@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "GHG Emission Factor Record",
+  "type": "object",
+  "required": [
+    "id", "activity", "scope", "category", "category_name", "method",
+    "value", "unit_numerator", "unit_denominator", "gwp_basis",
+    "country", "year", "organization", "dataset", "source_url",
+    "licence", "boundary", "value_status"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^[a-z0-9\\-]+$" },
+    "activity": { "type": "string" },
+    "scope": { "enum": [1, 2, 3] },
+    "category": { "type": "string" },
+    "category_name": { "type": "string" },
+    "method": {
+      "enum": ["spend-based", "weight-based", "activity-based", "average-data", "supplier-specific", "hybrid"]
+    },
+    "value": { "type": ["number", "null"] },
+    "unit_numerator": { "type": "string", "description": "e.g. kgCO2e, tCO2e, kgCO2, gCH4, gN2O, lbCO2e — native unit as published; single-gas factors are not force-converted to CO2e." },
+    "unit_denominator": { "type": "string" },
+    "gases": { "type": "array", "items": { "type": "string" } },
+    "gwp_basis": { "type": "string" },
+    "country": { "type": "string" },
+    "region": { "type": ["string", "null"], "description": "Sub-national region where applicable (US state, eGRID subregion, NERC region, balancing authority, etc.)" },
+    "year": { "type": "integer" },
+    "publication_year": { "type": ["integer", "null"] },
+    "organization": { "type": "string" },
+    "dataset": { "type": "string" },
+    "source_url": { "type": "string", "format": "uri" },
+    "source_page_or_table": { "type": ["string", "null"] },
+    "licence": { "type": "string" },
+    "price_year": { "type": ["integer", "null"] },
+    "currency_deflator_note": { "type": ["string", "null"] },
+    "boundary": { "type": "string" },
+    "value_status": { "enum": ["verified", "unverified", "placeholder"] },
+    "notes": { "type": ["string", "null"] }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "value_status": { "const": "verified" } } },
+      "then": { "properties": { "value": { "type": "number" } } }
+    },
+    {
+      "if": { "properties": { "method": { "const": "spend-based" } } },
+      "then": { "required": ["price_year"] }
+    }
+  ]
+}
